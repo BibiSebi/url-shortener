@@ -8,21 +8,6 @@ export default async function handler(
   res: NextApiResponse
 ) {
   const prisma = new PrismaClient();
-
-  async function main() {
-    // Connect the client
-    await prisma.$connect();
-    // ... you will write your Prisma Client queries here
-  }
-
-  main()
-    .catch((e) => {
-      throw e;
-    })
-    .finally(async () => {
-      await prisma.$disconnect();
-    });
-
   if (req.method === "POST") {
     const shaEncoded = sha256(req.body.link);
     const base62Converted = base62.stringify(shaEncoded);
@@ -35,7 +20,6 @@ export default async function handler(
       },
     });
 
-    console.log("prisma data", await prisma.redirect.findMany());
     res.status(200).json({ message: base62Converted.substring(0, 7) });
   } else {
     res.status(500).json({ message: "You fudged up!" });
